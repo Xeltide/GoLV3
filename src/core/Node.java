@@ -27,7 +27,7 @@ public class Node {
         return (int) p.getY();
     }
     
-    public void draw(Graphics g) {
+    public void drawOrigin(Graphics g) {
         g.drawOval(getX(), getY(), 5, 5);
     }
 }
