@@ -2,12 +2,15 @@ package gui;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Random;
 
 import javax.swing.JPanel;
 
+import core.HerbivoreNode;
 import core.HexNode;
 import core.Hexagon;
 import core.Node;
+import core.PlantNode;
 
 @SuppressWarnings("serial")
 public class DrawCtx extends JPanel {
@@ -26,12 +29,32 @@ public class DrawCtx extends JPanel {
     }
     
     private void init() {
+        genHexMap();
+        genHexLife();
+    }
+    
+    private void genHexMap() {
         for (int row = 0; row < getRows(); row++) {
             for (int col = 0; col < getCols(); col++) {
                 if ((col + 1) % 2 == 1) {
                     nodeMap[row][col] = new HexNode(getNewX(getRadius(), col), getNewY(getRadius(), row, true), getRadius());
                 } else if ((col + 1) % 2 == 0) {
                     nodeMap[row][col] = new HexNode(getNewX(getRadius(), col), getNewY(getRadius(), row, false), getRadius());
+                }
+            }
+        }
+    }
+    
+    private void genHexLife() {
+        Random rand = new Random();
+        int rolled;
+        for (int row = 0; row < getRows(); row++) {
+            for (int col = 0; col < getCols(); col++) {
+                rolled = rand.nextInt(10);
+                if (rolled < 1) {
+                    nodeMap[row][col].setInnerNode(new HerbivoreNode(nodeMap[row][col].getPoint(), getRadius()));
+                } else if (rolled < 4) {
+                    nodeMap[row][col].setInnerNode(new PlantNode(nodeMap[row][col].getPoint(), getRadius()));
                 }
             }
         }
@@ -104,6 +127,9 @@ public class DrawCtx extends JPanel {
         for (int row = 0; row < getRows(); row++) {
             for (int col = 0; col < getCols(); col++) {
                 nodeMap[row][col].draw(g2d);
+                if (nodeMap[row][col].getInnerNode() != null) {
+                    nodeMap[row][col].getInnerNode().draw(g2d);
+                }
             }
         }
     }

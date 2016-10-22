@@ -1,7 +1,10 @@
 package core;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 
 public class HexNode extends Node {
 
@@ -26,8 +29,17 @@ public class HexNode extends Node {
         innerHex = node;
     }
     
+    public Hexagon getHex() {
+        return hex;
+    }
+    
     public void draw(Graphics2D g) {
-        hex.draw(g, false);
+        Stroke tmpS = g.getStroke();
+        Color tmpC = g.getColor();
+        
+        g.setStroke(new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+        getHex().draw(g, false);
+        g.setStroke(tmpS);
     }
 
 }
