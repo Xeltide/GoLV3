@@ -1,19 +1,21 @@
 package gui;
 
+import core.HexMap;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-
 import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
     
     private DrawCtx draw;
+    private HexMap map;
     private Toolkit tk;
     private Dimension screen;
     
     public Main() {
-        draw = new DrawCtx(25, 60, 20);
+        map = new HexMap(25, 60, 20);
+        draw = new DrawCtx(map);
         tk = Toolkit.getDefaultToolkit();
         screen = tk.getScreenSize();
         
@@ -22,7 +24,7 @@ public class Main extends JFrame {
         pack();
         setVisible(true);
         
-        setSize(draw.getScreenWidth(), draw.getScreenHeight());
+        setSize(map.getScreenWidth(), map.getScreenHeight());
     }
     
     public static void main(String[] args) {
