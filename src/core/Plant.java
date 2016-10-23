@@ -2,17 +2,15 @@ package core;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Stroke;
 
-public class PlantNode extends HexNode {
+public class Plant extends Entity {
 
-    public PlantNode(Point p, int radius) {
-        super(p, radius);
-    }
-
-    public PlantNode(int x, int y, int radius) {
-        super(x, y, radius);
+    Hexagon hex;
+    
+    public Plant(HexNode location, int radius) {
+        super(location);
+        hex = new Hexagon(getPoint(), radius);
     }
     
     @Override
@@ -21,7 +19,9 @@ public class PlantNode extends HexNode {
         Color tmpC = g.getColor();
         
         g.setColor(Color.GREEN);
-        getHex().draw(g, true);
+        hex.draw(g, true);
+        
+        g.setStroke(tmpS);
         g.setColor(tmpC);
     }
 

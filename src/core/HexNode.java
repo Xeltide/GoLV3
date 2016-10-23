@@ -5,11 +5,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
+import java.util.ArrayList;
 
 public class HexNode extends Node {
 
     private Hexagon hex;
-    private HexNode innerHex;
+    private ArrayList<HexNode> linked = new ArrayList<HexNode>();;
     
     public HexNode(Point p, int radius) {
         super(p);
@@ -21,16 +22,19 @@ public class HexNode extends Node {
         hex = new Hexagon(this.getPoint(), radius);
     }
     
-    public HexNode getInnerNode() {
-        return innerHex;
+    public void addLink(HexNode node) {
+        linked.add(node);
     }
-    
-    public void setInnerNode(HexNode node) {
-        innerHex = node;
+    public ArrayList<HexNode> getLinks() {
+        return linked;
     }
     
     public Hexagon getHex() {
         return hex;
+    }
+    
+    public int getLinkSize() {
+        return linked.size();
     }
     
     public void draw(Graphics2D g) {
@@ -40,6 +44,7 @@ public class HexNode extends Node {
         g.setStroke(new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
         getHex().draw(g, false);
         g.setStroke(tmpS);
+        g.setColor(tmpC);
     }
 
 }

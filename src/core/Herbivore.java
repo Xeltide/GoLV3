@@ -2,17 +2,15 @@ package core;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Stroke;
 
-public class HerbivoreNode extends HexNode {
+public class Herbivore extends Animal {
 
-    public HerbivoreNode(Point p, int radius) {
-        super(p, radius);
-    }
-
-    public HerbivoreNode(int x, int y, int radius) {
-        super(x, y, radius);
+    Hexagon hex;
+    
+    public Herbivore(HexNode location, int radius) {
+        super(location);
+        hex = new Hexagon(getPoint(), radius);
     }
     
     @Override
@@ -21,7 +19,9 @@ public class HerbivoreNode extends HexNode {
         Color tmpC = g.getColor();
         
         g.setColor(Color.YELLOW);
-        getHex().draw(g, true);
+        hex.draw(g, true);
+        
+        g.setStroke(tmpS);
         g.setColor(tmpC);
     }
 

@@ -1,8 +1,8 @@
 package gui;
 
 import core.HexMap;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import core.TurnListener;
+
 import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
@@ -10,14 +10,10 @@ public class Main extends JFrame {
     
     private DrawCtx draw;
     private HexMap map;
-    private Toolkit tk;
-    private Dimension screen;
     
     public Main() {
         map = new HexMap(25, 60, 20);
         draw = new DrawCtx(map);
-        tk = Toolkit.getDefaultToolkit();
-        screen = tk.getScreenSize();
         
         add(draw);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,10 +21,15 @@ public class Main extends JFrame {
         setVisible(true);
         
         setSize(map.getScreenWidth(), map.getScreenHeight());
+        addMouseListener(new TurnListener(this));
+    }
+    
+    public void takeTurn() {
+        map.takeTurn();
     }
     
     public static void main(String[] args) {
-        Main main = new Main();
+        new Main();
     }
 
 }

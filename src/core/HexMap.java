@@ -1,10 +1,13 @@
 package core;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class HexMap {
 
     private HexNode[][] nodeMap;
+    private Entity[][] lifeMap;
+    private ArrayList<Entity> live = new ArrayList<Entity>();
     private int rows;
     private int cols;
     private int rad;
@@ -14,12 +17,14 @@ public class HexMap {
         this.cols = cols;
         this.rad = rad;
         nodeMap = new HexNode[rows][cols];
+        lifeMap = new Entity[rows][cols];
         init();
     }
     
     public void init() {
         genHexMap();
-        genHexLife();
+        genLife();
+        setLinks();
     }
     
     private void genHexMap() {
@@ -34,16 +39,42 @@ public class HexMap {
         }
     }
     
-    private void genHexLife() {
+    private void genLife() {
         Random rand = new Random();
         int rolled;
         for (int row = 0; row < getRows(); row++) {
             for (int col = 0; col < getCols(); col++) {
                 rolled = rand.nextInt(10);
                 if (rolled < 1) {
-                    nodeMap[row][col].setInnerNode(new HerbivoreNode(nodeMap[row][col].getPoint(), getRadius()));
+                    lifeMap[row][col] = new Herbivore(nodeMap[row][col], getRadius());
+                    live.add(lifeMap[row][col]);
                 } else if (rolled < 4) {
-                    nodeMap[row][col].setInnerNode(new PlantNode(nodeMap[row][col].getPoint(), getRadius()));
+                    lifeMap[row][col] = new Plant(nodeMap[row][col], getRadius());
+                }
+            }
+        }
+    }
+    
+    private void setLinks() {
+        for (int row = 0; row < getRows(); row++) {
+            for (int col = 0; col < getCols(); col++) {
+                if ((row - 1) >= 0 && (col - 1) >= 0) {
+                    nodeMap[row][col].addLink(getNodeAt(row - 1, col - 1));
+                }
+                if ((row - 1) >= 0) {
+                    nodeMap[row][col].addLink(getNodeAt(row - 1, col));
+                }
+                if ((row - 1) >= 0 && (col + 1) < getCols()) {
+                    nodeMap[row][col].addLink(getNodeAt(row - 1, col + 1));
+                }
+                if ((col - 1) >= 0) {
+                    nodeMap[row][col].addLink(getNodeAt(row, col - 1));
+                }
+                if ((col + 1) < getCols()) {
+                    nodeMap[row][col].addLink(getNodeAt(row, col + 1));
+                }
+                if ((row + 1) < getRows()) {
+                    nodeMap[row][col].addLink(getNodeAt(row + 1, col));
                 }
             }
         }
@@ -108,11 +139,21 @@ public class HexMap {
         return nodeMap[row][col];
     }
     
+    public Entity getEntityAt(int row, int col) {
+        return lifeMap[row][col];
+    }
+    
     public int getScreenWidth() {
         return nodeMap[0][getCols() - 1].getX() + (2 * getRadius());
     }
     
     public int getScreenHeight() {
         return nodeMap[getRows() - 1][0].getY() + (3 * getRadius());
+    }
+
+    public void takeTurn() {
+        for (int i = 0; i < live.size(); i++) {
+            
+        }
     }
 }
