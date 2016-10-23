@@ -25,7 +25,7 @@ public class HexMap {
     private void genHexMap() {
         for (int row = 0; row < getRows(); row++) {
             for (int col = 0; col < getCols(); col++) {
-                if ((col + 1) % 2 == 1) {
+                if ((col + 1) % 2 != 0) {
                     nodeMap[row][col] = new HexNode(getNewX(getRadius(), col), getNewY(getRadius(), row, true), getRadius());
                 } else if ((col + 1) % 2 == 0) {
                     nodeMap[row][col] = new HexNode(getNewX(getRadius(), col), getNewY(getRadius(), row, false), getRadius());

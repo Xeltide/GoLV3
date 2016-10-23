@@ -43,34 +43,67 @@ public class EntityMap {
         RoCo id = in.getRoCo();
         switch (in.getType()) {
         case HERBIVORE:
-            if ((id.getRo() - 1) >= 0 && (id.getCo() - 1) >= 0) {
-                if (lifeMap[id.getRo() - 1][id.getCo() - 1] == null || lifeMap[id.getRo() - 1][id.getCo() - 1].getType() == EntityType.PLANT) {
-                    in.addRoCo(new RoCo(id.getRo() - 1, id.getCo() - 1));
+            if ((id.getCo() + 2) % 2 == 0) {
+                if ((id.getRo() - 1) >= 0 && (id.getCo() - 1) >= 0) {
+                    if (lifeMap[id.getRo() - 1][id.getCo() - 1] == null || lifeMap[id.getRo() - 1][id.getCo() - 1].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo() - 1, id.getCo() - 1));
+                    }
                 }
-            }
-            if ((id.getRo() - 1) >= 0) {
-                if (lifeMap[id.getRo() - 1][id.getCo()] == null || lifeMap[id.getRo() - 1][id.getCo()].getType() == EntityType.PLANT) {
-                    in.addRoCo(new RoCo(id.getRo() - 1, id.getCo()));
+                if ((id.getRo() - 1) >= 0) {
+                    if (lifeMap[id.getRo() - 1][id.getCo()] == null || lifeMap[id.getRo() - 1][id.getCo()].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo() - 1, id.getCo()));
+                    }
                 }
-            }
-            if ((id.getRo() - 1) >= 0 && (id.getCo() + 1) < posMap.getCols()) {
-                if (lifeMap[id.getRo() - 1][id.getCo() + 1] == null || lifeMap[id.getRo() - 1][id.getCo() + 1].getType() == EntityType.PLANT) {
-                    in.addRoCo(new RoCo(id.getRo() - 1, id.getCo() + 1));
+                if ((id.getRo() - 1) >= 0 && (id.getCo() + 1) < posMap.getCols()) {
+                    if (lifeMap[id.getRo() - 1][id.getCo() + 1] == null || lifeMap[id.getRo() - 1][id.getCo() + 1].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo() - 1, id.getCo() + 1));
+                    }
                 }
-            }
-            if ((id.getCo() - 1) >= 0) {
-                if (lifeMap[id.getRo()][id.getCo() - 1] == null || lifeMap[id.getRo()][id.getCo() - 1].getType() == EntityType.PLANT) {
-                    in.addRoCo(new RoCo(id.getRo(), id.getCo() - 1));
+                if ((id.getCo() - 1) >= 0) {
+                    if (lifeMap[id.getRo()][id.getCo() - 1] == null || lifeMap[id.getRo()][id.getCo() - 1].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo(), id.getCo() - 1));
+                    }
                 }
-            }
-            if ((id.getCo() + 1) < posMap.getCols()) {
-                if (lifeMap[id.getRo()][id.getCo() + 1] == null || lifeMap[id.getRo()][id.getCo() + 1].getType() == EntityType.PLANT) {
-                    in.addRoCo(new RoCo(id.getRo(), id.getCo() + 1));
+                if ((id.getCo() + 1) < posMap.getCols()) {
+                    if (lifeMap[id.getRo()][id.getCo() + 1] == null || lifeMap[id.getRo()][id.getCo() + 1].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo(), id.getCo() + 1));
+                    }
                 }
-            }
-            if ((id.getRo() + 1) < posMap.getRows()) {
-                if (lifeMap[id.getRo() + 1][id.getCo()] == null || lifeMap[id.getRo() + 1][id.getCo()].getType() == EntityType.PLANT) {
-                    in.addRoCo(new RoCo(id.getRo() + 1, id.getCo()));
+                if ((id.getRo() + 1) < posMap.getRows()) {
+                    if (lifeMap[id.getRo() + 1][id.getCo()] == null || lifeMap[id.getRo() + 1][id.getCo()].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo() + 1, id.getCo()));
+                    }
+                }
+            } else {
+                if ((id.getRo() + 1) < posMap.getRows() && (id.getCo() - 1) >= 0) {
+                    if (lifeMap[id.getRo() + 1][id.getCo() - 1] == null || lifeMap[id.getRo() + 1][id.getCo() - 1].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo() + 1, id.getCo() - 1));
+                    }
+                }
+                if ((id.getRo() - 1) >= 0) {
+                    if (lifeMap[id.getRo() - 1][id.getCo()] == null || lifeMap[id.getRo() - 1][id.getCo()].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo() - 1, id.getCo()));
+                    }
+                }
+                if ((id.getRo() + 1) < posMap.getRows() && (id.getCo() + 1) < posMap.getCols()) {
+                    if (lifeMap[id.getRo() + 1][id.getCo() + 1] == null || lifeMap[id.getRo() + 1][id.getCo() + 1].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo() + 1, id.getCo() + 1));
+                    }
+                }
+                if ((id.getCo() - 1) >= 0) {
+                    if (lifeMap[id.getRo()][id.getCo() - 1] == null || lifeMap[id.getRo()][id.getCo() - 1].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo(), id.getCo() - 1));
+                    }
+                }
+                if ((id.getCo() + 1) < posMap.getCols()) {
+                    if (lifeMap[id.getRo()][id.getCo() + 1] == null || lifeMap[id.getRo()][id.getCo() + 1].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo(), id.getCo() + 1));
+                    }
+                }
+                if ((id.getRo() + 1) < posMap.getRows()) {
+                    if (lifeMap[id.getRo() + 1][id.getCo()] == null || lifeMap[id.getRo() + 1][id.getCo()].getType() == EntityType.PLANT) {
+                        in.addRoCo(new RoCo(id.getRo() + 1, id.getCo()));
+                    }
                 }
             }
             break;
