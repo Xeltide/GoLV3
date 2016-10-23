@@ -5,30 +5,50 @@ import java.awt.Point;
 
 abstract public class Entity {
     
-    private HexNode loc;
+    private Point p;
+    private RoCo id;
+    private EntityType type;
     
-    public Entity(HexNode location) {
-        this.loc = location;
+    public Entity(Point p, RoCo id, EntityType type) {
+        this.p = p;
+        this.id = id;
+        this.type = type;
+    }
+    
+    public Entity(int x, int y, int row, int col, EntityType type) {
+        this(new Point(x, y), new RoCo(row, col), type);
+    }
+    
+    public void setPoint(Point p) {
+        this.p = p;
+    }
+    
+    public void setPoint(int x, int y) {
+        setPoint(new Point(x, y));
     }
     
     public Point getPoint() {
-        return loc.getPoint();
+        return p;
     }
     
     public int getX() {
-        return loc.getX();
+        return (int) p.getX();
     }
     
     public int getY() {
-        return loc.getY();
+        return (int) p.getY();
     }
     
-    public HexNode getLoc() {
-        return loc;
+    public RoCo getRoCo() {
+        return id;
     }
     
-    public void setLoc(HexNode newLoc) {
-        loc = newLoc;
+    public void setRoCo(RoCo loc) {
+        id = loc;
+    }
+    
+    public EntityType getType() {
+        return type;
     }
 
     public abstract void draw(Graphics2D g);

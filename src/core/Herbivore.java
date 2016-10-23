@@ -2,15 +2,19 @@ package core;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Stroke;
 
 public class Herbivore extends Animal {
 
-    Hexagon hex;
+    EntityType type = EntityType.HERBIVORE;
     
-    public Herbivore(HexNode location, int radius) {
-        super(location);
-        hex = new Hexagon(getPoint(), radius);
+    public Herbivore(Point p, RoCo id, int radius, EntityType type) {
+        super(p, id, type, radius);
+    }
+    
+    public EntityType getType() {
+        return type;
     }
     
     @Override
@@ -19,10 +23,9 @@ public class Herbivore extends Animal {
         Color tmpC = g.getColor();
         
         g.setColor(Color.YELLOW);
-        hex.draw(g, true);
+        getHex().draw(g, true);
         
         g.setStroke(tmpS);
         g.setColor(tmpC);
     }
-
 }

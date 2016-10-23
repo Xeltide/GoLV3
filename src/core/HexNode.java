@@ -10,11 +10,15 @@ import java.util.ArrayList;
 public class HexNode extends Node {
 
     private Hexagon hex;
-    private ArrayList<HexNode> linked = new ArrayList<HexNode>();;
+    private ArrayList<HexNode> linked = new ArrayList<HexNode>();
+    private int row;
+    private int col;
     
-    public HexNode(Point p, int radius) {
+    public HexNode(Point p, int radius, int row, int col) {
         super(p);
         hex = new Hexagon(this.getPoint(), radius);
+        this.row = row;
+        this.col = col;
     }
 
     public HexNode(int x, int y, int radius) {
@@ -35,6 +39,14 @@ public class HexNode extends Node {
     
     public int getLinkSize() {
         return linked.size();
+    }
+    
+    public int getRow() {
+        return row;
+    }
+    
+    public int getCol() {
+        return col;
     }
     
     public void draw(Graphics2D g) {

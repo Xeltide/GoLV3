@@ -5,24 +5,28 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import core.EntityMap;
 import core.HexMap;
 
 @SuppressWarnings("serial")
 public class DrawCtx extends JPanel {
   
-    private HexMap map;
+    private HexMap tileMap;
+    private EntityMap lifeMap;
     
-    DrawCtx(HexMap map) {
-        this.map = map;
+    DrawCtx(HexMap map, EntityMap lifeMap) {
+        this.tileMap = map;
+        this.lifeMap = lifeMap;
     }
     
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        for (int row = 0; row < map.getRows(); row++) {
-            for (int col = 0; col < map.getCols(); col++) {
-                map.getNodeAt(row, col).draw(g2d);
-                if (map.getEntityAt(row, col) != null) {
-                    map.getEntityAt(row, col).draw(g2d);
+        g2d.clearRect(0, 0, getWidth(), getHeight());
+        for (int row = 0; row < tileMap.getRows(); row++) {
+            for (int col = 0; col < tileMap.getCols(); col++) {
+                tileMap.getNodeAt(row, col).draw(g2d);
+                if (lifeMap.getEntityAt(row, col) != null) {
+                    lifeMap.getEntityAt(row, col).draw(g2d);
                 }
             }
         }

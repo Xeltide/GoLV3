@@ -33,6 +33,10 @@ public class Hexagon extends Polygon {
         return (int) origin.getY();
     }
     
+    public void setOrigin(Point p) {
+        origin = p;
+    }
+    
     private void setPoints() {
         for (int i = 0; i < SIDES; i++) {
             xPoints[i] = (int) (getX() + Math.cos(i * Math.toRadians(60)) * radius);

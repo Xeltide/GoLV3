@@ -1,5 +1,6 @@
 package gui;
 
+import core.EntityMap;
 import core.HexMap;
 import core.TurnListener;
 
@@ -9,23 +10,26 @@ import javax.swing.JFrame;
 public class Main extends JFrame {
     
     private DrawCtx draw;
-    private HexMap map;
+    private HexMap tileMap;
+    private EntityMap lifeMap;
     
     public Main() {
-        map = new HexMap(25, 60, 20);
-        draw = new DrawCtx(map);
+        tileMap = new HexMap(25, 60, 20);
+        lifeMap = new EntityMap(tileMap);
+        draw = new DrawCtx(tileMap, lifeMap);
         
         add(draw);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
         setVisible(true);
         
-        setSize(map.getScreenWidth(), map.getScreenHeight());
+        setSize(tileMap.getScreenWidth(), tileMap.getScreenHeight());
         addMouseListener(new TurnListener(this));
     }
     
     public void takeTurn() {
-        map.takeTurn();
+        lifeMap.takeTurn();
+        draw.repaint();
     }
     
     public static void main(String[] args) {
