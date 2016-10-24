@@ -14,7 +14,7 @@ public class Main extends JFrame {
     private EntityMap lifeMap;
     
     public Main() {
-        tileMap = new HexMap(25, 60, 20);
+        tileMap = new HexMap(10, 10, 20);
         lifeMap = new EntityMap(tileMap);
         draw = new DrawCtx(tileMap, lifeMap);
         

@@ -29,6 +29,10 @@ abstract class Animal extends Entity {
     public void setHex(int radius) {
         hex = new Hexagon(getPoint(), radius);
     }
+    
+    public int getRadius() {
+        return hex.getRadius();
+    }
     /*public void addValid(HexNode node) {
         valid.add(node);
     }*/

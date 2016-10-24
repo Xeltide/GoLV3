@@ -33,6 +33,10 @@ public class Hexagon extends Polygon {
         return (int) origin.getY();
     }
     
+    public int getRadius() {
+        return radius;
+    }
+    
     public void setOrigin(Point p) {
         origin = p;
     }
