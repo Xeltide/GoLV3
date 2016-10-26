@@ -8,6 +8,7 @@ abstract class Animal extends Entity {
     
     private ArrayList<RoCo> valid = new ArrayList<RoCo>();
     private Hexagon hex;
+    private int health;
     
     public Animal(Point location, RoCo id, EntityType type, int radius) {
         super(location, id, type);
@@ -33,9 +34,14 @@ abstract class Animal extends Entity {
     public int getRadius() {
         return hex.getRadius();
     }
-    /*public void addValid(HexNode node) {
-        valid.add(node);
-    }*/
+    
+    public int getHealth() {
+        return health;
+    }
+    
+    public void setHealth(int health) {
+        this.health = health;
+    }
     
     public void move() {
         Random rand = new Random();
@@ -44,5 +50,6 @@ abstract class Animal extends Entity {
         } else {
             setRoCo(valid.get(rand.nextInt(valid.size())));
         }
+        health -= 1;
     }
 }

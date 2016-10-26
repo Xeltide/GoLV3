@@ -22,6 +22,7 @@ public class Herbivore extends Animal {
         } catch (IOException e) {
             System.err.println("Icon missing");
         }
+        setHealth(5);
     }
     
     public EntityType getType() {

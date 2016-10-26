@@ -123,7 +123,14 @@ public class EntityMap {
             now.clearValid();
             now.setPoint(posMap.getNodeAt(animals.get(i).getRoCo().getRo(), animals.get(i).getRoCo().getCo()).getPoint());
             now.setHex(posMap.getRadius());
-            lifeMap[now.getRoCo().getRo()][now.getRoCo().getCo()] = now;
+            if (lifeMap[now.getRoCo().getRo()][now.getRoCo().getCo()] != null) {
+                now.setHealth(5);
+            }
+            if (now.getHealth() == 0) {
+                animals.remove(i);
+            } else {
+                lifeMap[now.getRoCo().getRo()][now.getRoCo().getCo()] = now;
+            }
         }
     }
 }

@@ -33,31 +33,6 @@ public class HexMap {
             }
         }
     }
-    
-    private void setLinks() {
-        for (int row = 0; row < getRows(); row++) {
-            for (int col = 0; col < getCols(); col++) {
-                if ((row - 1) >= 0 && (col - 1) >= 0) {
-                    nodeMap[row][col].addLink(getNodeAt(row - 1, col - 1));
-                }
-                if ((row - 1) >= 0) {
-                    nodeMap[row][col].addLink(getNodeAt(row - 1, col));
-                }
-                if ((row - 1) >= 0 && (col + 1) < getCols()) {
-                    nodeMap[row][col].addLink(getNodeAt(row - 1, col + 1));
-                }
-                if ((col - 1) >= 0) {
-                    nodeMap[row][col].addLink(getNodeAt(row, col - 1));
-                }
-                if ((col + 1) < getCols()) {
-                    nodeMap[row][col].addLink(getNodeAt(row, col + 1));
-                }
-                if ((row + 1) < getRows()) {
-                    nodeMap[row][col].addLink(getNodeAt(row + 1, col));
-                }
-            }
-        }
-    }
     /**
      * <p>
      * Returns the x origin for a node based on radius and the column
