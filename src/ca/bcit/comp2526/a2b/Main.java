@@ -1,6 +1,11 @@
 package ca.bcit.comp2526.a2b;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.TimerTask;
+
 import javax.swing.JFrame;
+import javax.swing.Timer;
 /**
  * <p>
  * This is the driver and frame for the Game of Life program.
@@ -16,7 +21,9 @@ public class Main extends JFrame {
     
     private DrawCtx draw;
     private World lifeMap;
-    //private EntityMap lifeMap;
+    private Timer timer;
+    private int steps = 0;
+    private boolean running = false;
     /**
      * <p>
      * Main constructor to initialize the frame and
@@ -24,8 +31,9 @@ public class Main extends JFrame {
      * </p>
      */
     public Main() {
-        lifeMap = new World(25, 25, 20);
-        draw = new DrawCtx(lifeMap/*, lifeMap*/);
+        running = true;
+        lifeMap = new World(38, 83, 15);
+        draw = new DrawCtx(lifeMap);
         
         add(draw);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,11 +42,30 @@ public class Main extends JFrame {
         
         setSize(lifeMap.getScreenWidth(), lifeMap.getScreenHeight());
         addMouseListener(new TurnListener(this));
+        timer = new Timer(0, new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                cycle();
+                steps++;
+                setTitle("Steps: " + steps);
+            }
+            
+        });
     }
     /**
      * On click, moves all animals by one step.
      */
     public void takeTurn() {
+        running = !running;
+        if (!running) {
+            timer.start();
+        } else {
+            timer.stop();
+        }
+    }
+    
+    public void cycle() {
         lifeMap.takeTurn();
         draw.repaint();
     }

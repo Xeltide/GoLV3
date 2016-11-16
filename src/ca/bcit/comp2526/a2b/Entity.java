@@ -154,7 +154,7 @@ public abstract class Entity {
         return color;
     }
     
-    public abstract void takeTurn();
+    public abstract void takeTurn(ArrayList<Entity> entities);
     
     public abstract void die();
 }

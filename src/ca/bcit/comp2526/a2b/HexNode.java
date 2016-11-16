@@ -16,6 +16,7 @@ public class HexNode extends Node {
 
     private ArrayList<HexNode> linked = new ArrayList<HexNode>();
     private ArrayList<Entity> here = new ArrayList<Entity>();
+    private Terrain terrain;
     private Hexagon hex;
     /**
      * Constructor for the HexNode.
@@ -58,6 +59,14 @@ public class HexNode extends Node {
         here.remove(i);
     }
     
+    public void setTerrain(Terrain newTerrain) {
+        terrain = newTerrain;
+    }
+    
+    public Terrain getTerrain() {
+        return terrain;
+    }
+    
     public ArrayList<Entity> getEntities() {
         return here;
     }
@@ -90,7 +99,7 @@ public class HexNode extends Node {
      * 
      * @return Hexagon
      */
-    private Hexagon getHex() {
+    public Hexagon getHex() {
         return hex;
     }
     /**
@@ -104,6 +113,9 @@ public class HexNode extends Node {
         g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
         Color tmpC = g2d.getColor();
         getHex().draw(g2d, false);
+        if (getTerrain() != null) {
+            terrain.draw(g2d);
+        }
         g2d.setStroke(tmpS);
         g2d.setColor(tmpC);
     }

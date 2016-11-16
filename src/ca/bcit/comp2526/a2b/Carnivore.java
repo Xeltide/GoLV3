@@ -1,7 +1,7 @@
 package ca.bcit.comp2526.a2b;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
@@ -10,18 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-
 import javax.imageio.ImageIO;
-/**
- * <p>
- * Defines the Herbivore class. Later iteration plans to have behaviors
- * appropriately placed within class instead of handled by the world.
- * </p>
- * 
- * @author Joshua Abe
- * @version Nov.6th, 2016
- */
-public class Herbivore extends Animal implements CarnEdible, OmniEdible {
+
+public class Carnivore extends Animal implements OmniEdible {
 
     BufferedImage img;
     private int moves;
@@ -36,7 +27,7 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
      * @param radius occupied world space
      * @param type entity type
      */
-    public Herbivore(Point origin, int radius) {
+    public Carnivore(Point origin, int radius) {
         super(origin, radius);
         init();
     }
@@ -49,9 +40,9 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         } catch (IOException e) {
             System.err.println("Icon missing");
         }
-        setColor(Color.YELLOW);
-        setHealth(6);
-        moves = 1;
+        setColor(Color.RED);
+        setHealth(3);
+        moves = 2;
     }
     /**
      * <p>
@@ -69,13 +60,13 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
                 getRadius(), getRadius(), null, null);*/
         Stroke tmpS = g2d.getStroke();
         g2d.setStroke(tmpS);
-        
     }
     
     public void takeTurn(ArrayList<Entity> lives) {
         if (!mate(lives)) {
             move(moves);
         }
+        moves = 2;
     }
     
     private boolean mate(ArrayList<Entity> lives) {
@@ -83,7 +74,7 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         Iterator<HexNode> nodeIter = linked.iterator();
         ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
         HexNode current;
-        boolean herb = false;
+        boolean carn = false;
         boolean empty;
         int food = 0;
         while (nodeIter.hasNext()) {
@@ -93,10 +84,10 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
             while (inside.hasNext()) {
                 Entity currentEntity = inside.next();
                 empty = false;
-                if (currentEntity instanceof Herbivore) {
-                    herb = true;
+                if (currentEntity instanceof Omnivore) {
+                    carn = true;
                 }
-                if (currentEntity instanceof HerbEdible) {
+                if (currentEntity instanceof OmniEdible) {
                     food++;
                 }
             }
@@ -106,19 +97,13 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
             }
         }
         
-        if (validNodes.size() > 1 && herb && food > 1) {
-            int rolled = rand.nextInt(2) + 1;
-            for (HexNode herbSpot : validNodes) {
-                if (rolled > 0) {
-                    Herbivore newHerb = new Herbivore(herbSpot.getPoint(),
-                            herbSpot.getHex().getRadius());
-                    herbSpot.addEntity(newHerb);
-                    lives.add(newHerb);
-                    rolled -= 1;
-                } else {
-                    break;
-                }
-            }
+        if (validNodes.size() > 2 && carn && food > 2) {
+            int rolled = rand.nextInt(validNodes.size());
+            HexNode position = validNodes.get(rolled);
+            Carnivore newCarn = new Carnivore(position.getPoint(),
+                    position.getHex().getRadius());
+            position.addEntity(newCarn);
+            lives.add(newCarn);
             return true;
         }
         return false;
@@ -134,15 +119,26 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         HexNode current = null;
         while (nodeIter.hasNext()) {
             current = nodeIter.next();
-            for (Entity inside : current.getEntities()) {
-                if (!(inside instanceof HerbEdible)) {
+            if (current.getTerrain() instanceof Water) {
+                continue;
+            }
+            Iterator<Entity> inside = current.getEntities().iterator();
+            while (inside.hasNext()) {
+                Entity currentEntity = inside.next();
+                if (!(currentEntity instanceof CarnEdible) && !(currentEntity instanceof Plant)) {
                     valid = false;
-                } else {
+                } else if (currentEntity instanceof CarnEdible) {
                     food = true;
                 }
             }
             
             if (valid && food) {
+                setHealth(3);
+                setColor(Color.RED);
+                getCurrent().removeEntity(this);
+                current.addEntity(this);
+                eat(current);
+                setHex(current.getPoint(), getRadius());
                 break;
             } else if (valid) {
                 validNodes.add(current);
@@ -151,22 +147,18 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
             food = false;
         }
         
-        if (valid && food) {
-            setHealth(6);
-            setColor(Color.YELLOW);
-            getCurrent().removeEntity(this);
-            eat(current);
-            current.addEntity(this);
-            setHex(current.getPoint(), getRadius());
-        } else if (validNodes.size() > 0) {
-            HexNode newNode = validNodes.get(rand.nextInt(validNodes.size()));
-            if (!(newNode.getTerrain() instanceof Water)) {
+        if (!(valid && food)) {
+            if (validNodes.size() > 0 && moves > 0) {
+                moves -= 1;
+                getCurrent().removeEntity(this);
+                validNodes.get(rand.nextInt(validNodes.size())).addEntity(this);
+                setHex(current.getPoint(), getRadius());
+                move(moves);
+            } else {
+                moves -= 1;
                 setHealth(getHealth() - 1);
                 setColor(getColor().darker());
             }
-            getCurrent().removeEntity(this);
-            newNode.addEntity(this);
-            setHex(current.getPoint(), getRadius());
         }
     }
     
@@ -174,8 +166,8 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         Iterator<Entity> here = node.getEntities().iterator();
         while (here.hasNext()) {
             Entity current = here.next();
-            if (current instanceof HerbEdible) {
-                here.remove();
+            if (current instanceof CarnEdible) {
+                current.setHealth(0);
             }
         }
     }
@@ -184,10 +176,13 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         Iterator<Entity> location = getCurrent().getEntities().iterator();
         while (location.hasNext()) {
             Entity current = location.next();
-            if (current instanceof Herbivore) {
+            if (current instanceof Carnivore) {
                 location.remove();
                 break;
             }
         }
     }
 }
+
+
+

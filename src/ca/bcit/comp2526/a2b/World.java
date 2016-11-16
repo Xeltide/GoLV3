@@ -1,6 +1,7 @@
 package ca.bcit.comp2526.a2b;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -18,6 +19,7 @@ import org.omg.PortableServer.CurrentOperations;
 public class World {
 
     private ArrayList<Entity> entities = new ArrayList<Entity>();
+    private ArrayList<Entity> updated = new ArrayList<Entity>();
     private HexNode[][] nodeMap;
     private int rows;
     private int cols;
@@ -119,39 +121,55 @@ public class World {
         int rolled;
         for (int row = 0; row < getRows(); row++) {
             for (int col = 0; col < getCols(); col++) {
-                rolled = rand.nextInt(10);
-                if (rolled < 1) {
+                rolled = rand.nextInt(100);
+                if (rolled < 10) {
                     Herbivore newHerb = new Herbivore(
                             nodeMap[row][col].getPoint(), getRadius());
                     nodeMap[row][col].addEntity(newHerb);
                     entities.add(newHerb);
-                } else if (rolled < 4) {
+                } else if (rolled < 40) {
                     Plant newPlant = new Plant(
                             nodeMap[row][col].getPoint(), getRadius());
                     nodeMap[row][col].addEntity(newPlant);
                     entities.add(newPlant);
+                } else if (rolled < 50) {
+                    Carnivore newCarn = new Carnivore(
+                            nodeMap[row][col].getPoint(), getRadius());
+                    nodeMap[row][col].addEntity(newCarn);
+                    entities.add(newCarn);
+                } else if (rolled < 60) {
+                    Omnivore newOmni = new Omnivore(
+                            nodeMap[row][col].getPoint(), getRadius());
+                    nodeMap[row][col].addEntity(newOmni);
+                    entities.add(newOmni);
+                } else if (rolled < 63) {
+                    Water newWater = new Water(nodeMap[row][col].getPoint(), getRadius());
+                    nodeMap[row][col].setTerrain(newWater);
                 }
             }
         }
     }
     
     public void takeTurn() {
+        Collections.shuffle(entities);
         Iterator<Entity> livesIter = entities.iterator();
         while (livesIter.hasNext()) {
             Entity current = livesIter.next();
-            current.takeTurn();
             if (current.getHealth() == 0) {
                 current.die();
                 livesIter.remove();
+                current = null;
             }
-            /*if (current instanceof Animal) {
-                current.takeTurn();
+            if (current != null) {
+                current.takeTurn(updated);
                 if (current.getHealth() == 0) {
-                    ((Herbivore) current).die();
+                    current.die();
                     livesIter.remove();
                 }
-            }*/
+            }
         }
+        entities.addAll(updated);
+        updated.clear();
     }
     /**
      * <p>

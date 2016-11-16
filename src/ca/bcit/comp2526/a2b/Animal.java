@@ -33,5 +33,5 @@ abstract class Animal extends Entity {
     /**
      * Picks a new world space id to occupy from the valid list.
      */
-    public abstract void move();
+    public abstract void move(int moves);
 }
