@@ -107,17 +107,16 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         }
         
         if (validNodes.size() > 1 && herb && food > 1) {
-            int rolled = rand.nextInt(2) + 1;
-            for (HexNode herbSpot : validNodes) {
-                if (rolled > 0) {
-                    Herbivore newHerb = new Herbivore(herbSpot.getPoint(),
-                            herbSpot.getHex().getRadius());
-                    herbSpot.addEntity(newHerb);
-                    lives.add(newHerb);
-                    rolled -= 1;
-                } else {
-                    break;
-                }
+            int numToSpawn = rand.nextInt(2) + 1;
+            System.out.println(numToSpawn);
+            for (int i = 0; i < numToSpawn; i++) {
+                int rolled = rand.nextInt(validNodes.size());
+                HexNode position = validNodes.get(rolled);
+                validNodes.remove(rolled);
+                Herbivore newHerb = new Herbivore(position.getPoint(),
+                        position.getHex().getRadius());
+                position.addEntity(newHerb);
+                lives.add(newHerb);
             }
             return true;
         }

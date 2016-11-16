@@ -100,17 +100,15 @@ public class Omnivore extends Animal implements CarnEdible {
         }
         
         if (validNodes.size() > 2 && omni && food > 2) {
-            int rolled = rand.nextInt(2) + 1;
-            for (HexNode omniSpot : validNodes) {
-                if (rolled > 0) {
-                    Omnivore newOmni = new Omnivore(omniSpot.getPoint(),
-                            omniSpot.getHex().getRadius());
-                    omniSpot.addEntity(newOmni);
-                    lives.add(newOmni);
-                    rolled -= 1;
-                } else {
-                    break;
-                }
+            int numToSpawn = rand.nextInt(2) + 1;
+            for (int i = 0; i < numToSpawn; i++) {
+                int rolled = rand.nextInt(validNodes.size());
+                HexNode position = validNodes.get(rolled);
+                validNodes.remove(rolled);
+                Omnivore newOmni = new Omnivore(position.getPoint(),
+                        position.getHex().getRadius());
+                position.addEntity(newOmni);
+                lives.add(newOmni);
             }
             return true;
         }
