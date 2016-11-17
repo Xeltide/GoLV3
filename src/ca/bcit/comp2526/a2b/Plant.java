@@ -55,45 +55,50 @@ public class Plant extends Entity implements HerbEdible, OmniEdible {
         }
     }
     
-    @Override
-    public void takeTurn(ArrayList<Entity> lives) {
-        Random rand = new Random();
+    private boolean checkReproduce(ArrayList<HexNode> validNodes) {
         Iterator<HexNode> nodeIter = linked.iterator();
-        ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
         int plants = 0;
+        boolean empty;
         while (nodeIter.hasNext()) {
-            HexNode current = nodeIter.next();
-            boolean empty = true;
-            for (Entity inside : current.getEntities()) {
-                if ((inside instanceof Plant)) {
+            HexNode currentNode = nodeIter.next();
+            empty = true;
+            for (Entity inside : currentNode.getEntities()) {
+                if (inside instanceof Plant) {
                     plants++;
                 }
                 empty = false;
             }
-            
-            if (current.getTerrain() instanceof Water) {
+            if (currentNode.getTerrain() instanceof Water) {
                 empty = false;
             }
-            
             if (empty) {
-                validNodes.add(current);
+                validNodes.add(currentNode);
             }
-            empty = true;
         }
         
-        if (plants > 2 && validNodes.size() > 1) {
-            int rolled = rand.nextInt(2) + 1;
-            for (HexNode seedSpot : validNodes) {
-                if (rolled > 0) {
-                    Plant newPlant = new Plant(seedSpot.getPoint(),
-                            seedSpot.getHex().getRadius());
-                    seedSpot.addEntity(newPlant);
-                    lives.add(newPlant);
-                    rolled -= 1;
-                } else {
-                    break;
-                }
-            }
+        return (plants > 2 && validNodes.size() > 1);
+    }
+    
+    private void grow(ArrayList<HexNode> validNodes, ArrayList<Entity> living) {
+        Random rand = new Random();
+        int numToSpawn = rand.nextInt(2) + 1;
+        for (int i = 0; i < numToSpawn; i++) {
+            int rolled = rand.nextInt(validNodes.size());
+            HexNode position = validNodes.get(rolled);
+            validNodes.remove(rolled);
+            Plant newPlant = new Plant(position.getPoint(),
+                    position.getHex().getRadius());
+            position.addEntity(newPlant);
+            living.add(newPlant);
+        }
+    }
+    
+    @Override
+    public void takeTurn(ArrayList<Entity> lives) {
+        ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
+        
+        if (checkReproduce(validNodes)) {
+            grow(validNodes, lives);
         }
         setHealth(getHealth() - 1);
         setColor(getColor().darker());

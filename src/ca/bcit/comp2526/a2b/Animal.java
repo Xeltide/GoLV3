@@ -1,6 +1,7 @@
 package ca.bcit.comp2526.a2b;
 
 import java.awt.Point;
+import java.util.ArrayList;
 /**
  * <p>
  * This is the abstract class for an animal, defining all of the core
@@ -33,5 +34,9 @@ abstract class Animal extends Entity {
     /**
      * Picks a new world space id to occupy from the valid list.
      */
-    public abstract void move(int moves);
+    //protected abstract void move(int moves);
+    
+    //protected abstract boolean checkAround(ArrayList<HexNode> validNodes, HexNode foodPos);
+    
+    //protected abstract void mate(ArrayList<HexNode> validNodes, ArrayList<Entity> lives);
 }

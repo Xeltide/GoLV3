@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.omg.PortableServer.CurrentOperations;
-
 /**
  * <p>
  * Contains the tile map made of hexagons to be drawn under
@@ -158,9 +156,7 @@ public class World {
             if (current.getHealth() == 0) {
                 current.die();
                 livesIter.remove();
-                current = null;
-            }
-            if (current != null) {
+            } else {
                 current.takeTurn(updated);
                 if (current.getHealth() == 0) {
                     current.die();

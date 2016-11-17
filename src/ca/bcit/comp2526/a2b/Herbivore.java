@@ -23,8 +23,6 @@ import javax.imageio.ImageIO;
  */
 public class Herbivore extends Animal implements CarnEdible, OmniEdible {
 
-    BufferedImage img;
-    private int moves;
     /**
      * <p>
      * Constructor for Herbivore. Sets the origin point,
@@ -44,14 +42,120 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
      * Attempts to initialize herbivore graphic.
      */
     private void init() {
-        try {
-            img = ImageIO.read(new File("herbIcon.png"));
-        } catch (IOException e) {
-            System.err.println("Icon missing");
-        }
         setColor(Color.YELLOW);
         setHealth(6);
-        moves = 1;
+    }
+    
+    public void takeTurn(ArrayList<Entity> lives) {
+        ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
+        if (checkMate(validNodes)) {
+            mate(validNodes, lives);
+        } else if (checkMove(validNodes)) {
+            move(validNodes, 1);
+        } else {
+            if (!(getCurrent().getTerrain() instanceof Water)) {
+                setHealth(getHealth() - 1);
+                setColor(getColor().darker());
+            }
+        }
+    }
+    
+    protected boolean checkMate(ArrayList<HexNode> validNodes) {
+        Iterator<HexNode> nodeIter = linked.iterator();
+        HexNode currentNode;
+        int food = 0;
+        boolean herb = false;
+        boolean empty;
+        while (nodeIter.hasNext()) {
+            currentNode = nodeIter.next();
+            empty = true;
+            for (Entity inside : currentNode.getEntities()) {
+                if (inside instanceof HerbEdible) {
+                    food++;
+                } else if (inside instanceof Herbivore) {
+                    herb = true;
+                }
+                empty = false;
+            }
+            if (empty) {
+                validNodes.add(currentNode);
+            }
+        }
+        
+        return (validNodes.size() > 1 && food > 1 && herb);
+    }
+    
+    protected void mate(ArrayList<HexNode> validNodes, ArrayList<Entity> lives) {
+        Random rand = new Random();
+        int numToSpawn = rand.nextInt(2) + 1;
+        for (int i = 0; i < numToSpawn; i++) {
+            int rolled = rand.nextInt(validNodes.size());
+            HexNode position = validNodes.get(rolled);
+            validNodes.remove(rolled);
+            Herbivore newHerb = new Herbivore(position.getPoint(),
+                    position.getHex().getRadius());
+            position.addEntity(newHerb);
+            lives.add(newHerb);
+        }
+    }
+    
+    protected boolean checkMove(ArrayList<HexNode> validNodes) {
+        Iterator<HexNode> nodeIter = linked.iterator();
+        HexNode currentNode;
+        boolean valid;
+        boolean food;
+        validNodes.clear();
+        while (nodeIter.hasNext()) {
+            currentNode = nodeIter.next();
+            valid = true;
+            food = false;
+            for (Entity inside : currentNode.getEntities()) {
+                if (!(inside instanceof HerbEdible)) {
+                    valid = false;
+                } else {
+                    food = true;
+                }
+            }
+            if (valid && food) {
+                validNodes.clear();
+                validNodes.add(currentNode);
+                break;
+            } else if (valid) {
+                validNodes.add(currentNode);
+            }
+        }
+        
+        return (validNodes.size() > 0);
+    }
+    
+    //@Override
+    protected void move(ArrayList<HexNode> validNodes, int moves) {
+        Random rand = new Random();
+        HexNode newNode = validNodes.get(0);
+        boolean food = false;
+        int rolled;
+        for (Entity inside : newNode.getEntities()) {
+            if (inside instanceof HerbEdible) {
+                food = true;
+                break;
+            }
+        }
+        if (food) {
+            getCurrent().removeEntity(this);
+            newNode.addEntity(this);
+            eat(newNode);
+            setHex(newNode.getPoint(), getRadius());
+        } else {
+            rolled = rand.nextInt(validNodes.size());
+            newNode = validNodes.get(rolled);
+            getCurrent().removeEntity(this);
+            newNode.addEntity(this);
+            setHex(newNode.getPoint(), getRadius());
+            if (!(newNode.getTerrain() instanceof Water)) {
+                setHealth(getHealth() - 1);
+                setColor(getColor().darker());
+            }
+        }
     }
     /**
      * <p>
@@ -65,108 +169,9 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         g2d.setColor(getColor());
         getHex().draw(g2d, true);
         g2d.setColor(tmpC);
-        /*g2d.drawImage(img, getX() - (getRadius() / 2) - 1, getY() - (getRadius() / 2) - 1, 
-                getRadius(), getRadius(), null, null);*/
         Stroke tmpS = g2d.getStroke();
         g2d.setStroke(tmpS);
         
-    }
-    
-    public void takeTurn(ArrayList<Entity> lives) {
-        if (!mate(lives)) {
-            move(moves);
-        }
-    }
-    
-    private boolean mate(ArrayList<Entity> lives) {
-        Random rand = new Random();
-        Iterator<HexNode> nodeIter = linked.iterator();
-        ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
-        HexNode current;
-        boolean herb = false;
-        boolean empty;
-        int food = 0;
-        while (nodeIter.hasNext()) {
-            empty = true;
-            current = nodeIter.next();
-            Iterator<Entity> inside = current.getEntities().iterator();
-            while (inside.hasNext()) {
-                Entity currentEntity = inside.next();
-                empty = false;
-                if (currentEntity instanceof Herbivore) {
-                    herb = true;
-                }
-                if (currentEntity instanceof HerbEdible) {
-                    food++;
-                }
-            }
-            
-            if (empty) {
-                validNodes.add(current);
-            }
-        }
-        
-        if (validNodes.size() > 1 && herb && food > 1) {
-            int numToSpawn = rand.nextInt(2) + 1;
-            System.out.println(numToSpawn);
-            for (int i = 0; i < numToSpawn; i++) {
-                int rolled = rand.nextInt(validNodes.size());
-                HexNode position = validNodes.get(rolled);
-                validNodes.remove(rolled);
-                Herbivore newHerb = new Herbivore(position.getPoint(),
-                        position.getHex().getRadius());
-                position.addEntity(newHerb);
-                lives.add(newHerb);
-            }
-            return true;
-        }
-        return false;
-    }
-    
-    @Override
-    public void move(int moves) {
-        Random rand = new Random();
-        Iterator<HexNode> nodeIter = linked.iterator();
-        ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
-        boolean valid = true;
-        boolean food = false;
-        HexNode current = null;
-        while (nodeIter.hasNext()) {
-            current = nodeIter.next();
-            for (Entity inside : current.getEntities()) {
-                if (!(inside instanceof HerbEdible)) {
-                    valid = false;
-                } else {
-                    food = true;
-                }
-            }
-            
-            if (valid && food) {
-                break;
-            } else if (valid) {
-                validNodes.add(current);
-            }
-            valid = true;
-            food = false;
-        }
-        
-        if (valid && food) {
-            setHealth(6);
-            setColor(Color.YELLOW);
-            getCurrent().removeEntity(this);
-            eat(current);
-            current.addEntity(this);
-            setHex(current.getPoint(), getRadius());
-        } else if (validNodes.size() > 0) {
-            HexNode newNode = validNodes.get(rand.nextInt(validNodes.size()));
-            if (!(newNode.getTerrain() instanceof Water)) {
-                setHealth(getHealth() - 1);
-                setColor(getColor().darker());
-            }
-            getCurrent().removeEntity(this);
-            newNode.addEntity(this);
-            setHex(current.getPoint(), getRadius());
-        }
     }
     
     private void eat(HexNode node) {
@@ -177,6 +182,8 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
                 here.remove();
             }
         }
+        setColor(Color.YELLOW);
+        setHealth(6);
     }
     
     public void die() {
