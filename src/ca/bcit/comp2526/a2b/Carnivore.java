@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 /**
+ * <p>
+ * Carnivore class in the Game Of Life. Eats all other Animals,
+ * dies in 3 turns, color is red.
+ * </p>
  * 
  * @author Joshua Abe
  * @version Nov.16th, 2016
@@ -17,7 +21,7 @@ public class Carnivore extends Animal implements OmniEdible {
     private int moves;
     /**
      * <p>
-     * Default constructor for Herbivore. Sets the origin point
+     * Default constructor for Carnivore. Sets the origin point
      * and radius for the hexagon. Initializes default values
      * for color, health, and moves.
      * </p>
@@ -146,8 +150,12 @@ public class Carnivore extends Animal implements OmniEdible {
         
         return (validNodes.size() > 0);
     }
-    
-    //@Override
+    /**
+     * <p>
+     * Moves the Carnivore to a valid location and eats, moves,
+     * or waits depending on what is in the surrounding nodes.
+     * </p>
+     */
     protected void move(ArrayList<HexNode> validNodes, ArrayList<Entity> lives, int moves) {
         Random rand = new Random();
         HexNode newNode = validNodes.get(0);
@@ -237,7 +245,6 @@ public class Carnivore extends Animal implements OmniEdible {
      * using the hexagonal representation and color.
      * </p>
      */
-    @Override
     public void draw(Graphics2D g2d) {
         Color tmpC = g2d.getColor();
         g2d.setColor(getColor());

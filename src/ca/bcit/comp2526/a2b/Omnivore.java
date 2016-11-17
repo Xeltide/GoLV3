@@ -4,46 +4,49 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
-
+/**
+ * <p>
+ * Omnivore class in the Game Of Life. Eats Plants,
+ * dies in 4 turns, color is magenta.
+ * </p>
+ * 
+ * @author Joshua Abe
+ * @version Nov.16th, 2016
+ */
 public class Omnivore extends Animal implements CarnEdible {
-
     /**
      * <p>
-     * Constructor for Herbivore. Sets the origin point,
-     * world space size, and entity type.
+     * Default constructor for Omnivore. Sets the origin point
+     * and radius for the hexagon. Initializes default values
+     * for color, health, and moves.
      * </p>
      * 
      * @param origin world space origin
-     * @param id world space id
      * @param radius occupied world space
-     * @param type entity type
      */
     public Omnivore(Point origin, int radius) {
         super(origin, radius);
         init();
     }
     /**
-     * Attempts to initialize herbivore graphic.
+     * Initializes the remaining traits for the Omnivore.
      */
     private void init() {
         setColor(Color.MAGENTA);
         setHealth(4);
     }
-    
+    /**
+     * Turn order logic for a Omnivore.
+     */
     public void takeTurn(ArrayList<Entity> lives) {
         ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
         if (checkMate(validNodes)) {
             mate(validNodes, lives);
         } else if (checkMove(validNodes)) {
-            move(validNodes, 1);
+            move(validNodes, lives, 1);
         } else {
             if (!(getCurrent().getTerrain() instanceof Water)) {
                 setHealth(getHealth() - 1);
@@ -51,7 +54,15 @@ public class Omnivore extends Animal implements CarnEdible {
             }
         }
     }
-    
+    /**
+     * <p>
+     * Returns whether mating conditions are met or not while storing
+     * valid spawn nodes for babies.
+     * </p>
+     * 
+     * @param validNodes valid spawn locations for babies.
+     * @return boolean for mating conditions.
+     */
     protected boolean checkMate(ArrayList<HexNode> validNodes) {
         Iterator<HexNode> nodeIter = linked.iterator();
         HexNode currentNode;
@@ -76,7 +87,14 @@ public class Omnivore extends Animal implements CarnEdible {
         
         return (validNodes.size() > 2 && food > 2 && omni);
     }
-    
+    /**
+     * <p>
+     * Spawns a new Omnivore at a randomly picked valid node.
+     * </p>
+     * 
+     * @param validNodes valid nodes to spawn in.
+     * @param lives new Herbivore is added to the turn list.
+     */
     protected void mate(ArrayList<HexNode> validNodes, ArrayList<Entity> lives) {
         Random rand = new Random();
         int numToSpawn = rand.nextInt(2) + 1;
@@ -90,7 +108,16 @@ public class Omnivore extends Animal implements CarnEdible {
             lives.add(newOmni);
         }
     }
-    
+    /**
+     * <p>
+     * Returns whether valid nodes are available while selecting valid nodes
+     * to move to. As soon as a valid node with food is found, that is the only
+     * available option in the list.
+     * </p>
+     * 
+     * @param validNodes valid move locations.
+     * @return boolean for valid movement.
+     */
     protected boolean checkMove(ArrayList<HexNode> validNodes) {
         Iterator<HexNode> nodeIter = linked.iterator();
         HexNode currentNode;
@@ -119,9 +146,13 @@ public class Omnivore extends Animal implements CarnEdible {
         
         return (validNodes.size() > 0);
     }
-    
-    //@Override
-    protected void move(ArrayList<HexNode> validNodes, int moves) {
+    /**
+     * <p>
+     * Moves the Omnivore to a valid location and eats, moves,
+     * or waits depending on what is in the surrounding nodes.
+     * </p>
+     */
+    protected void move(ArrayList<HexNode> validNodes, ArrayList<Entity> lives, int moves) {
         Random rand = new Random();
         HexNode newNode = validNodes.get(0);
         boolean food = false;
@@ -149,7 +180,14 @@ public class Omnivore extends Animal implements CarnEdible {
             }
         }
     }
-    
+    /**
+     * <p>
+     * Sets all edible health to 0 to be destroyed by the World.
+     * Refills health and resets color.
+     * </p>
+     * 
+     * @param node location of eating.
+     */
     private void eat(HexNode node) {
         Iterator<Entity> here = node.getEntities().iterator();
         while (here.hasNext()) {
@@ -161,7 +199,12 @@ public class Omnivore extends Animal implements CarnEdible {
         setHealth(4);
         setColor(Color.MAGENTA);
     }
-    
+    /**
+     * <p>
+     * Removes the Omnivore from the current location. Removal
+     * from the turn list (lives) is handled by the World.
+     * </p>
+     */
     public void die() {
         Iterator<Entity> location = getCurrent().getEntities().iterator();
         while (location.hasNext()) {
@@ -174,7 +217,7 @@ public class Omnivore extends Animal implements CarnEdible {
     }
     /**
      * <p>
-     * Draws the Herbivore to the graphics context
+     * Draws the Omnivore to the graphics context
      * using the hexagonal representation.
      * </p>
      */

@@ -1,16 +1,18 @@
 package ca.bcit.comp2526.a2b;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Stroke;
 import java.util.ArrayList;
 /**
+ * <p>
  * Combines node functionality with a hexagon for representation.
+ * Stores neighbouring HexNodes and Entities currently occupying
+ * this HexNode. Also can contain a single Terrain type.
+ * </p>
  * 
  * @author Joshua Abe
- * @version Nov.6th, 2016
+ * @version Nov.16th, 2016
  */
 public class HexNode extends Node {
 
@@ -39,36 +41,56 @@ public class HexNode extends Node {
         super(originX, originY);
         hex = new Hexagon(this.getPoint(), radius);
     }
-    
+    /**
+     * Adds an Entity occupying the HexNode.
+     * 
+     * @param life new Entity to add.
+     */
     public void addEntity(Entity life) {
         here.add(life);
         life.setLinked(linked);
         life.setCurrent(this);
         life.setPoint(getPoint());
     }
-    
+    /**
+     * Removes an Entity occupying the HexNode.
+     * 
+     * @param life Entity to remove.
+     */
     public void removeEntity(Entity life) {
         Entity current;
-        int i;
-        for (i = 0; i < here.size(); i++) {
-            current = here.get(i);
+        int index;
+        for (index = 0; index < here.size(); index++) {
+            current = here.get(index);
             if (current.getClass().getName().equals(life.getClass().getName())) {
                 break;
             }
         }
-        here.remove(i);
+        here.remove(index);
     }
-    
+    /**
+     * Returns the entire list of Entities occupying the HexNode.
+     * 
+     * @return array of Entities.
+     */
+    public ArrayList<Entity> getEntities() {
+        return here;
+    }
+    /**
+     * Sets the Terrain for the HexNode.
+     * 
+     * @param newTerrain new Terrain.
+     */
     public void setTerrain(Terrain newTerrain) {
         terrain = newTerrain;
     }
-    
+    /**
+     * Returns the current Terrain for the HexNode.
+     * 
+     * @return current Terrain.
+     */
     public Terrain getTerrain() {
         return terrain;
-    }
-    
-    public ArrayList<Entity> getEntities() {
-        return here;
     }
     /**
      * Adds a linked HexNode to array.
@@ -103,21 +125,19 @@ public class HexNode extends Node {
         return hex;
     }
     /**
-     * Draw the hexagon representation.
+     * <p>
+     * Draw the hexagon representation of the HexNode. Also draws
+     * any terrain if available.
+     * </p>
      * 
      * @param g2d graphics context
      */
     public void draw(Graphics2D g2d) {
-        Stroke tmpS = g2d.getStroke();
-        
         g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
-        Color tmpC = g2d.getColor();
         getHex().draw(g2d, false);
         if (getTerrain() != null) {
             terrain.draw(g2d);
         }
-        g2d.setStroke(tmpS);
-        g2d.setColor(tmpC);
     }
 
 }

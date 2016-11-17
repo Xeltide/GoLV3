@@ -2,8 +2,6 @@ package ca.bcit.comp2526.a2b;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.TimerTask;
-
 import javax.swing.JFrame;
 import javax.swing.Timer;
 /**
@@ -54,7 +52,10 @@ public class Main extends JFrame {
         });
     }
     /**
-     * On click, moves all animals by one step.
+     * <p>
+     * On click, starts and stops the timer that runs
+     * the game cycle.
+     * </p>
      */
     public void takeTurn() {
         running = !running;
@@ -64,7 +65,9 @@ public class Main extends JFrame {
             timer.stop();
         }
     }
-    
+    /**
+     * Tiny game loop.
+     */
     public void cycle() {
         lifeMap.takeTurn();
         draw.repaint();

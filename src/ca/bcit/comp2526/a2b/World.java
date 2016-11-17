@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
-
 /**
  * <p>
  * Contains the tile map made of hexagons to be drawn under
@@ -25,7 +24,8 @@ public class World {
     /**
      * <p>
      * HexMap constructor takes in number of rows,
-     * columns, and radius of each node.
+     * columns, and radius of each node. Initializes the
+     * board and tiles.
      * </p>
      * 
      * @param rows integer
@@ -40,15 +40,21 @@ public class World {
         init();
     }
     /**
-     * Initializes the hex map.
+     * <p>
+     * Initializes the hex map, generates the neighbour listings
+     * for each node, and generates the initial seed.
+     * </p>
      */
-    public void init() {
+    private void init() {
         genWorld();
         genNeighbours();
         genLife();
     }
     /**
-     * Fills the HexNode arrays and initializes the new nodes.
+     * <p>
+     * Generates the HexNodes that the world is made up of.
+     * All HexNodes will contain the World's Entities.
+     * </p>
      */
     private void genWorld() {
         for (int row = 0; row < getRows(); row++) {
@@ -67,7 +73,12 @@ public class World {
             }
         }
     }
-    
+    /**
+     * <p>
+     * Generates a list of neighbours for each cell based on the relative
+     * visual location of each hexagon.
+     * </p>
+     */
     private void genNeighbours() {
         for (int row = 0; row < getRows(); row++) {
             for (int col = 0; col < getCols(); col++) {
@@ -113,7 +124,19 @@ public class World {
             }
         }
     }
-    
+    /**<p>
+     * Generates the initial life for the World based on
+     * the outlined probability.
+     * <ul>
+     * <li>10% Herbivores</li>
+     * <li>10% Carnivores</li>
+     * <li>10% Omnivores</li>
+     * <li>30% Plants</li>
+     * <li>3% Water</li>
+     * </ul>
+     * </p>
+     * 
+     */
     private void genLife() {
         Random rand = new Random();
         int rolled;
@@ -147,7 +170,13 @@ public class World {
             }
         }
     }
-    
+    /**
+     * <p>
+     * Manages the turns of all living Entities. Death is dealt with before
+     * and after every Entities turn to determine if they died or were killed.
+     * All new Entities are added to the living Entities at the end of the turn.
+     * </p>
+     */
     public void takeTurn() {
         Collections.shuffle(entities);
         Iterator<Entity> livesIter = entities.iterator();

@@ -5,7 +5,10 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 /**
- * Abstract Entity class, that stores all core traits of living things.
+ * <p>
+ * Abstract Entity class, that stores all core traits and
+ * behaviours of living things.
+ * </p>
  * 
  * @author Joshua Abe
  * @version Nov.6th, 2016
@@ -145,16 +148,32 @@ public abstract class Entity {
     public void setHealth(int health) {
         this.health = health;
     }
-    
+    /**
+     * Sets an Entity's color.
+     * 
+     * @param color new color.
+     */
     public void setColor(Color color) {
         this.color = color;
     }
-    
+    /**
+     * Returns the current color of the Entity.
+     * 
+     * @return current color.
+     */
     public Color getColor() {
         return color;
     }
-    
+    /**
+     * <p>
+     * All Entities must perform actions, such as moving, mating, etc.
+     * This function manages the behaviours that an Animal may take
+     * per "turn".
+     * </p>
+     */
     public abstract void takeTurn(ArrayList<Entity> entities);
-    
+    /**
+     * All things that live must eventually die. 
+     */
     public abstract void die();
 }

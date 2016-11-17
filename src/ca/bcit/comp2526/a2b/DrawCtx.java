@@ -11,13 +11,12 @@ import javax.swing.JPanel;
  * </p>
  * 
  * @author Joshua Abe
- * @version Nov.6th, 2016
+ * @version Nov.16th, 2016
  */
 @SuppressWarnings("serial")
 public class DrawCtx extends JPanel {
   
     private World lifeMap;
-    //private EntityMap lifeMap;
     /**
      * <p>
      * Constructor for the drawing context.
@@ -27,9 +26,8 @@ public class DrawCtx extends JPanel {
      * @param map HexMap containing hex board
      * @param lifeMap EntityMap containing entities
      */
-    DrawCtx(World map/*, EntityMap lifeMap*/) {
+    DrawCtx(World map) {
         this.lifeMap = map;
-        //this.lifeMap = lifeMap;
     }
     /**
      * <p>

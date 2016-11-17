@@ -11,7 +11,7 @@ import java.util.Random;
  * Plant class to represent edible plants for Herbivore class.
  * 
  * @author Joshua Abe
- * @version Nov.6th, 2016
+ * @version Nov.16th, 2016
  */
 public class Plant extends Entity implements HerbEdible, OmniEdible {
 
@@ -32,29 +32,26 @@ public class Plant extends Entity implements HerbEdible, OmniEdible {
         setColor(Color.GREEN);
     }
     /**
-     * Renders the graphics representation.
+     * Turn order logic for a Plant.
      */
-    @Override
-    public void draw(Graphics2D g2d) {
-        Color tmpC = g2d.getColor();
-        g2d.setColor(getColor());
-        Stroke tmpS = g2d.getStroke();
-        hex.draw(g2d, true);
-        g2d.setColor(tmpC);
-        g2d.setStroke(tmpS);
-    }
-    
-    public void die() {
-        Iterator<Entity> location = getCurrent().getEntities().iterator();
-        while (location.hasNext()) {
-            Entity current = location.next();
-            if (current instanceof Plant) {
-                location.remove();
-                break;
-            }
+    public void takeTurn(ArrayList<Entity> lives) {
+        ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
+        
+        if (checkReproduce(validNodes)) {
+            grow(validNodes, lives);
         }
+        setHealth(getHealth() - 1);
+        setColor(getColor().darker());
     }
-    
+    /**
+     * <p>
+     * Returns whether mating conditions are met or not while storing
+     * valid spawn nodes for seedlings.
+     * </p>
+     * 
+     * @param validNodes valid spawn locations for seedlings.
+     * @return boolean for reproduction conditions.
+     */
     private boolean checkReproduce(ArrayList<HexNode> validNodes) {
         Iterator<HexNode> nodeIter = linked.iterator();
         int plants = 0;
@@ -78,7 +75,14 @@ public class Plant extends Entity implements HerbEdible, OmniEdible {
         
         return (plants > 2 && validNodes.size() > 1);
     }
-    
+    /**
+     * <p>
+     * Spawns a new Plant at a randomly picked valid node.
+     * </p>
+     * 
+     * @param validNodes valid nodes to spawn in.
+     * @param lives new Herbivore is added to the turn list.
+     */
     private void grow(ArrayList<HexNode> validNodes, ArrayList<Entity> living) {
         Random rand = new Random();
         int numToSpawn = rand.nextInt(2) + 1;
@@ -92,16 +96,35 @@ public class Plant extends Entity implements HerbEdible, OmniEdible {
             living.add(newPlant);
         }
     }
-    
-    @Override
-    public void takeTurn(ArrayList<Entity> lives) {
-        ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
-        
-        if (checkReproduce(validNodes)) {
-            grow(validNodes, lives);
+    /**
+     * <p>
+     * Removes the Plant from the current location. Removal
+     * from the turn list (lives) is handled by the World.
+     * </p>
+     */
+    public void die() {
+        Iterator<Entity> location = getCurrent().getEntities().iterator();
+        while (location.hasNext()) {
+            Entity current = location.next();
+            if (current instanceof Plant) {
+                location.remove();
+                break;
+            }
         }
-        setHealth(getHealth() - 1);
-        setColor(getColor().darker());
+    }
+    /**
+     * <p>
+     * Draws the Plant to the graphics context
+     * using the hexagonal representation.
+     * </p>
+     */
+    public void draw(Graphics2D g2d) {
+        Color tmpC = g2d.getColor();
+        g2d.setColor(getColor());
+        Stroke tmpS = g2d.getStroke();
+        hex.draw(g2d, true);
+        g2d.setColor(tmpC);
+        g2d.setStroke(tmpS);
     }
 
 }

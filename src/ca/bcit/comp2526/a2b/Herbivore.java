@@ -4,54 +4,49 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
 /**
  * <p>
- * Defines the Herbivore class. Later iteration plans to have behaviors
- * appropriately placed within class instead of handled by the world.
+ * Herbivore class in the Game Of Life. Eats Plants,
+ * dies in 6 turns, color is yellow.
  * </p>
  * 
  * @author Joshua Abe
- * @version Nov.6th, 2016
+ * @version Nov.16th, 2016
  */
 public class Herbivore extends Animal implements CarnEdible, OmniEdible {
-
     /**
      * <p>
-     * Constructor for Herbivore. Sets the origin point,
-     * world space size, and entity type.
+     * Default constructor for Herbivore. Sets the origin point
+     * and radius for the hexagon. Initializes default values
+     * for color, health, and moves.
      * </p>
      * 
      * @param origin world space origin
-     * @param id world space id
      * @param radius occupied world space
-     * @param type entity type
      */
     public Herbivore(Point origin, int radius) {
         super(origin, radius);
         init();
     }
     /**
-     * Attempts to initialize herbivore graphic.
+     * Initializes the remaining traits for the Herbivore.
      */
     private void init() {
         setColor(Color.YELLOW);
         setHealth(6);
     }
-    
+    /**
+     * Turn order logic for a Herbivore.
+     */
     public void takeTurn(ArrayList<Entity> lives) {
         ArrayList<HexNode> validNodes = new ArrayList<HexNode>();
         if (checkMate(validNodes)) {
             mate(validNodes, lives);
         } else if (checkMove(validNodes)) {
-            move(validNodes, 1);
+            move(validNodes, lives, 1);
         } else {
             if (!(getCurrent().getTerrain() instanceof Water)) {
                 setHealth(getHealth() - 1);
@@ -59,7 +54,15 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
             }
         }
     }
-    
+    /**
+     * <p>
+     * Returns whether mating conditions are met or not while storing
+     * valid spawn nodes for babies.
+     * </p>
+     * 
+     * @param validNodes valid spawn locations for babies.
+     * @return boolean for mating conditions.
+     */
     protected boolean checkMate(ArrayList<HexNode> validNodes) {
         Iterator<HexNode> nodeIter = linked.iterator();
         HexNode currentNode;
@@ -84,7 +87,14 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         
         return (validNodes.size() > 1 && food > 1 && herb);
     }
-    
+    /**
+     * <p>
+     * Spawns a new Herbivore at a randomly picked valid node.
+     * </p>
+     * 
+     * @param validNodes valid nodes to spawn in.
+     * @param lives new Herbivore is added to the turn list.
+     */
     protected void mate(ArrayList<HexNode> validNodes, ArrayList<Entity> lives) {
         Random rand = new Random();
         int numToSpawn = rand.nextInt(2) + 1;
@@ -98,7 +108,16 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
             lives.add(newHerb);
         }
     }
-    
+    /**
+     * <p>
+     * Returns whether valid nodes are available while selecting valid nodes
+     * to move to. As soon as a valid node with food is found, that is the only
+     * available option in the list.
+     * </p>
+     * 
+     * @param validNodes valid move locations.
+     * @return boolean for valid movement.
+     */
     protected boolean checkMove(ArrayList<HexNode> validNodes) {
         Iterator<HexNode> nodeIter = linked.iterator();
         HexNode currentNode;
@@ -127,9 +146,13 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         
         return (validNodes.size() > 0);
     }
-    
-    //@Override
-    protected void move(ArrayList<HexNode> validNodes, int moves) {
+    /**
+     * <p>
+     * Moves the Herbivore to a valid location and eats, moves,
+     * or waits depending on what is in the surrounding nodes.
+     * </p>
+     */
+    protected void move(ArrayList<HexNode> validNodes, ArrayList<Entity> lives, int moves) {
         Random rand = new Random();
         HexNode newNode = validNodes.get(0);
         boolean food = false;
@@ -159,21 +182,12 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
     }
     /**
      * <p>
-     * Draws the Herbivore to the graphics context
-     * using the hexagonal representation.
+     * Sets all edible health to 0 to be destroyed by the World.
+     * Refills health and resets color.
      * </p>
+     * 
+     * @param node location of eating.
      */
-    @Override
-    public void draw(Graphics2D g2d) {
-        Color tmpC = g2d.getColor();
-        g2d.setColor(getColor());
-        getHex().draw(g2d, true);
-        g2d.setColor(tmpC);
-        Stroke tmpS = g2d.getStroke();
-        g2d.setStroke(tmpS);
-        
-    }
-    
     private void eat(HexNode node) {
         Iterator<Entity> here = node.getEntities().iterator();
         while (here.hasNext()) {
@@ -185,7 +199,12 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
         setColor(Color.YELLOW);
         setHealth(6);
     }
-    
+    /**
+     * <p>
+     * Removes the Herbivore from the current location. Removal
+     * from the turn list (lives) is handled by the World.
+     * </p>
+     */
     public void die() {
         Iterator<Entity> location = getCurrent().getEntities().iterator();
         while (location.hasNext()) {
@@ -195,5 +214,19 @@ public class Herbivore extends Animal implements CarnEdible, OmniEdible {
                 break;
             }
         }
+    }
+    /**
+     * <p>
+     * Draws the Herbivore to the graphics context
+     * using the hexagonal representation.
+     * </p>
+     */
+    public void draw(Graphics2D g2d) {
+        Color tmpC = g2d.getColor();
+        g2d.setColor(getColor());
+        getHex().draw(g2d, true);
+        g2d.setColor(tmpC);
+        Stroke tmpS = g2d.getStroke();
+        g2d.setStroke(tmpS);
     }
 }

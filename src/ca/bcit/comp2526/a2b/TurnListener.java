@@ -3,7 +3,10 @@ package ca.bcit.comp2526.a2b;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 /**
- * 
+ * <p>
+ * TurnListener class to attach a mouse clicked event to the
+ * Main frame.
+ * </p>
  * 
  * @author Joshua Abe
  * @version Nov.6th, 2016
